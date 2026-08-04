@@ -151,41 +151,4 @@ readStream.on("data", (chunk) => {
 
 
 
- const express = require('express');
 
- 
- const app= express()
- app.use(express.json());
-const USERS_FILE = path.join(__dirname, 'users.json');
-function readUsers() {
-  if (!fs.existsSync(USERS_FILE)) {
-    fs.writeFileSync(USERS_FILE, '[]');
-  }
-  const data = fs.readFileSync(USERS_FILE, 'utf8');
-  return JSON.parse(data);
-}
-function writeUsers(users) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-}
-app.post('/user', (req, res) => {
-  const { name, age, email } = req.body;
-
-  const users = readUsers();
-
-  const emailExists = users.some(user => user.email === email);
-
-  if (emailExists) {
-    return res.status(400).json({ message: "Email already exists." });
-  }
-
-  const newUser = { name, age, email };
-  users.push(newUser);
-  writeUsers(users);
-
-  res.status(201).json({ message: "User added successfully." });
-});
-
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-}); 
